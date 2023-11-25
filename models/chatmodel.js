@@ -3,8 +3,11 @@ const mongoose =require('mongoose')
 // schema
 const ChatSchema = new mongoose.Schema(
     {
-      participantsId: {
-        type: Array,
+      chatId:{
+        type:String,
+      },
+      participants: {
+        type: Object,
       },
      
       messages: {
@@ -19,4 +22,8 @@ const ChatSchema = new mongoose.Schema(
       timestamps: true,
     }
   )
+
+  const ChatModel=mongoose.model("Chat",ChatSchema)
+
+module.exports = { ChatModel };
     
