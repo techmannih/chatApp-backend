@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
 
     fullname: {
         type: String,
+        required:true,
     },
 
     username: {
@@ -29,6 +30,7 @@ const userSchema = new mongoose.Schema({
     profilePicUrl: {
         type: String,
         default: "default_image_url",
+        required:true,
     },
 
 },

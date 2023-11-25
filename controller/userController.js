@@ -4,8 +4,9 @@ const { UserModel }=require("../models/usermodel")
 
 // create new user 
 module.exports.createUser = async (req, res) => {
+    const {fullname,userId,username,profilePicUrl,email}=req.body
     try {
-      const user = await UserModel.create(req.body);
+      const user = await UserModel.create(fullname,userId,username,profilePicUrl,email);
       res.status(200).send(user);
     } catch (err) {
       res.status(203).send({ "status": false });

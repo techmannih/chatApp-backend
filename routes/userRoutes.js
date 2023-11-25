@@ -11,8 +11,5 @@ router.route("/users/id/:firebaseUserId").get(findUserbyFirebase);
 router.route("/user/setDP").put(setProfilePic)
 
 
-// router.route("/deleteUser").post(deleteUser);
-// router.route("/users/:email").get(uniqueEmail)
-
 
 module.exports= router;
