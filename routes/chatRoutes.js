@@ -1,30 +1,14 @@
 const {Router} =require('express')
-
+const {createChats,deleteChats,addNewMessage,deleteMessage,editMessage}=require("../controller/chatsController")
 
 const router =Router();
-
-// user
-
-// router.route("/users").get(searchAvailableUsers);
-// router.route("/addUser").post(addUser);
-// router.route("/deleteUser").post(deleteUser);
-// router.route("/users/:email").get(uniqueEmail)
-
 // //chats
 
-// router.route("/").get(accessChats);
+router.route("/chats").get(getAllChats);
+router.route("/chats/create").post(createChats);
+router.route("/chats/delete").delete(deleteChats);
+router.route("/chats/message/new").put(addNewMessage);
+router.route("/chats/message/delete").delete(deleteMessage);
+router.route("/chats/message/update").put(editMessage);
 
-// router.route("/").post(fetchChats);
-// router.route("/chats/create").post(createChats);
-
-// router.route("/chats/delete").post(deleteChats);
-
-// router.route("/chats/new/message").put(addNewMessage);
-
-// router.route("/chats/delete/message").post(deleteMessage);
-
-// router.route("/chats/change/dp").put(chnageDP);
-
-
-
-module.exports= router
+module.exports= router;
