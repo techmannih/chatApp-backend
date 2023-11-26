@@ -38,7 +38,7 @@ module.exports.createChats = async (req, res) => {
     }
 };
 // delete the chats
-module.exports.deleteChat = async (req, res) => {
+module.exports.deleteChats = async (req, res) => {
     try {
         const chatId = req.params.chatId;
         const deletedChat = await ChatModel.findByIdAndDelete(chatId);// Use findByIdAndDelete to delete the chat
@@ -138,3 +138,23 @@ module.exports.editMessage = async (req, res) => {
     }
 };
 
+module.exports.deleteMessage = async (req, res) => {
+    try {
+        const { chatId, messageId } = req.body;
+        if (!chatId || !messageId) {
+            return res.status(400).json({ success: false, message: 'Incomplete data provided' });
+        }
+        const updatedChat = await ChatModel.findByIdAndUpdate(
+            chatId,
+            { $pull: { messages: { _id: messageId } } },
+            { new: true }
+        );
+        if (!updatedChat) {
+            return res.status(404).json({ success: false, message: 'Chat or message not found' });
+        }
+        res.status(200).json({ success: true, chat: updatedChat });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
