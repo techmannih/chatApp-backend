@@ -9,7 +9,7 @@ module.exports.createUser = async (req, res) => {
       const user = await UserModel.create(fullname,userId,username,profilePicUrl,email);
       res.status(200).send(user);
     } catch (err) {
-      res.status(203).send({ "status": false });
+      res.status(500).send({ "status": false });
     }
   };
 // if any user want to delete your account
