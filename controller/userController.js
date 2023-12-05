@@ -1,5 +1,7 @@
 
 const { UserModel }=require("../models/usermodel")
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
 
 
 // create new user 
@@ -9,7 +11,7 @@ module.exports.createUser = async (req, res) => {
       const user = await UserModel.create(fullname,userId,username,profilePicUrl,email);
       res.status(200).send(user);
     } catch (err) {
-      res.status(203).send({ "status": false });
+      res.status(500).send({ "status": false });
     }
   };
 // if any user want to delete your account
@@ -69,6 +71,44 @@ module.exports.setProfilePic = async (req, res) => {
         );
 
         // Check if the user was found and updated successfully
+        if (updatedUser) {
+            res.status(200).send({ status: true, message: 'Profile picture set successfully', user: updatedUser });
+        } else {
+            res.status(404).send({ status: false, message: 'User not found' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ status: false, message: 'Internal Server Error' });
+    }
+};
+
+// Multer configuration for handling file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+module.exports.setProfilePic = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).send({ status: false, message: 'No file uploaded' });
+        }
+
+        // Upload the image to Cloudinary
+        const result = await cloudinary.uploader.upload(file.buffer, {
+            folder: 'profile-pictures',
+            format: 'jpg',
+            transformation: [{ width: 150, height: 150, crop: 'fill' }]
+        });
+
+        // Update the user's profile picture URL in the database
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            { $set: { profilePicUrl: result.secure_url } },
+            { new: true }
+        );
+
         if (updatedUser) {
             res.status(200).send({ status: true, message: 'Profile picture set successfully', user: updatedUser });
         } else {
