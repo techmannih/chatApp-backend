@@ -1,5 +1,6 @@
 const app = require('express')();
-const routes=require("./routes/chatRoutes")
+const chatRoutes=require("./routes/chatRoutes")
+const userRoutes=require("./routes/userRoutes")
 const server = require('http').createServer(app);
 require("dotenv").config()
 const io = require('socket.io')(server);
@@ -14,7 +15,8 @@ app.get('/', function(req, res) {
 //    res.sendfile('index.html');
 });
 
-app.use(routes);
+app.use(chatRoutes);
+app.use(userRoutes);
 
 server.listen(port, function() {
   console.log(`Listening on port ${port}`);
