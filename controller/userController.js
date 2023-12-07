@@ -6,15 +6,16 @@ const multer = require('multer');
 
 // create new user 
 module.exports.createUser = async (req, res) => {
-    const {fullname,userId,username,profilePicUrl,email}=req.body
-    try {
-      const user = await UserModel.create(fullname,userId,username,profilePicUrl,email);
-      res.status(200).send(user);
-    } catch (err) {
-      res.status(500).send({ "status": false });
-    }
-  };
-// if any user want to delete your account
+  const { fullname, userId, username, profilePicUrl, email } = req.body;
+  try {
+    const user = await UserModel.create({fullname,userId,username,profilePicUrl,email,
+    });
+    res.status(200).send(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ status: false, error: "An error occurred while creating the user." });
+  }
+};
 module.exports.deleteUser = async (req, res) => {
     try {
         const userId = req.params.userId;
