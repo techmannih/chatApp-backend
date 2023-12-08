@@ -3,7 +3,6 @@ const { UserModel }=require("../models/usermodel")
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 
-
 // create new user 
 module.exports.createUser = async (req, res) => {
   const { fullname, userId, username, profilePicUrl, email } = req.body;
@@ -19,8 +18,8 @@ module.exports.createUser = async (req, res) => {
 // delete the user account 
 module.exports.deleteUser = async (req, res) => {
     try {
-        const userId = req.params.userId;
-        const deletedUser = await UserModel.findByIdAndDelete(userId); // Use Mongoose to find and delete the user
+        const userId = req.params.id;
+        const deletedUser = await UserModel.findOneAndDelete({userId}); // Use Mongoose to find and delete the user
         if (deletedUser) {
             res.status(200).send({ status: true, message: 'User deleted successfully' });
         } else {
