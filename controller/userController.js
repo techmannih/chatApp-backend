@@ -2,10 +2,13 @@
 const { UserModel }=require("../models/usermodel")
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
+const {generateUsername} = require("../utils/generateUsername");
 
 // create new user 
 module.exports.createUser = async (req, res) => {
-  const { fullname, userId, username, profilePicUrl, email } = req.body;
+  const username = generateUsername(req.body.email);
+  if(!username) return res.status(400).send({ status: false, error: "Invalid email" });
+  const { fullname, userId, profilePicUrl, email } = req.body;
   try {
     const user = await UserModel.create({fullname,userId,username,profilePicUrl,email,
     });
