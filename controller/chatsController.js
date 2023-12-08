@@ -13,6 +13,7 @@ module.exports.getAllChats = async (req, res) => {
 };
 // create chats
 module.exports.createChats = async (req, res) => {
+    console.log("first error ")
     try {
         const { chatId, senderId, reciverId } = req.body;
         const existingChat = await ChatModel.findOne({
@@ -23,15 +24,13 @@ module.exports.createChats = async (req, res) => {
             await existingChat.save();
             return res.status(200).json({ success: true, chat: existingChat });
         } else {
-            res.status(200).send({ status: "chats not found" });
-        }
         // If a chat doesn't exist, create a new one
         const newChat = await ChatModel.create({
             chatId,
             participants: [senderId, reciverId],
         });
         await newChat.save();  // Save the new chat to the database
-        res.status(201).json({ success: true, chat: newChat });
+        res.status(201).json({ success: true, chat: newChat });}
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Internal server error' });
@@ -41,7 +40,7 @@ module.exports.createChats = async (req, res) => {
 module.exports.deleteChats = async (req, res) => {
     try {
         const chatId = req.params.chatId;
-        const deletedChat = await ChatModel.findByIdAndDelete(chatId);// Use findByIdAndDelete to delete the chat
+        const deletedChat = await ChatModel.findOneAndDelete({chatId});// Use findByIdAndDelete to delete the chat
 
         if (deletedChat) {
             res.status(200).send({ status: true, message: 'Chat deleted successfully', chat: deletedChat });
@@ -81,7 +80,8 @@ module.exports.addNewMessage = async (req, res) => {
     }
 };
 // update message by use of chatId and messageId
-module.exports.updateMessage = async (req, res) => {
+module.exports.editMessage = async (req, res) => {
+    console.log("update error")
     try {
         const { chatId, messageId, updatedMessage } = req.body;
         if (!chatId || !messageId || !updatedMessage) {
@@ -90,7 +90,7 @@ module.exports.updateMessage = async (req, res) => {
         const updatedChat = await ChatModel.findOneAndUpdate(
             {
                 chatId,
-                'messages._id': messageId, // Use _id to identify the specific message
+                'messages.messageId': messageId, // Use _id to identify the specific message
             },
             {
                 $set: {
@@ -111,43 +111,22 @@ module.exports.updateMessage = async (req, res) => {
     }
 };
 //delete message by use of chatId and messageId 
-module.exports.editMessage = async (req, res) => {
-    try {
-        const { chatId, messageId } = req.body;
-        if (!chatId || !messageId) {
-            return res.status(400).json({ success: false, message: 'Incomplete data provided' });
-        }
-        const updatedChat = await ChatModel.findByIdAndUpdate(
-            chatId,
-            {
-                $pull: {
-                    messages: { _id: messageId },
-                },
-            },
-            { new: true }
-        );
-        // Check if the chat or the specific message exists
-        if (!updatedChat) {
-            return res.status(404).json({ success: false, message: 'Chat or message not found' });
-        } else {
-            res.status(200).json({ success: true, chat: updatedChat });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-};
-
 module.exports.deleteMessage = async (req, res) => {
     try {
         const { chatId, messageId } = req.body;
         if (!chatId || !messageId) {
             return res.status(400).json({ success: false, message: 'Incomplete data provided' });
         }
-        const updatedChat = await ChatModel.findByIdAndUpdate(
-            chatId,
-            { $pull: { messages: { _id: messageId } } },
-            { new: true }
+        const updatedChat = await ChatModel.findOneAndDelete(
+            {
+                chatId,
+                // 'messages.messageId': messageId, // Use _id to identify the specific message
+            },
+            {
+                $pull: {
+                    'messages.$.messageId': messageId,
+                },
+            },
         );
         if (!updatedChat) {
             return res.status(404).json({ success: false, message: 'Chat or message not found' });
