@@ -112,21 +112,16 @@ module.exports.editMessage = async (req, res) => {
 };
 //delete message by use of chatId and messageId 
 module.exports.deleteMessage = async (req, res) => {
+    const { chatId, messageId } = req.body;
+    if (!chatId || !messageId) {
+        return res.status(400).json({ success: false, message: 'Incomplete data provided' });
+    }
+    
     try {
-        const { chatId, messageId } = req.body;
-        if (!chatId || !messageId) {
-            return res.status(400).json({ success: false, message: 'Incomplete data provided' });
-        }
-        const updatedChat = await ChatModel.findOneAndDelete(
-            {
-                chatId,
-                // 'messages.messageId': messageId, // Use _id to identify the specific message
-            },
-            {
-                $pull: {
-                    'messages.$.messageId': messageId,
-                },
-            },
+        const updatedChat = await ChatModel.findOneAndUpdate(
+            { chatId },
+            { $pull: { messages: { messageId } } },
+            { new: true } // To get the updated document
         );
         if (!updatedChat) {
             return res.status(404).json({ success: false, message: 'Chat or message not found' });
