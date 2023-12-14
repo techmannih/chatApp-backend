@@ -22,3 +22,15 @@ To setup this project locally for development purposes please follow the followi
 **5. Start the application locally by running.**
 
     $ npm start
+
+
+## Features
+- Real Time chat application
+- authenticate user with Google Account (firebase)
+- Single chat application
+- delete chat
+- Send a messege
+- delete  messege
+- Edit messege
+- update user profile photo
+- delete your account if you want
