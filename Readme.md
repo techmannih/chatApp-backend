@@ -34,3 +34,4 @@ To setup this project locally for development purposes please follow the followi
 - Edit messege
 - update user profile photo
 - delete your account if you want
+- logout your account
